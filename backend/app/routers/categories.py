@@ -8,6 +8,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
 from app.models.category import Category
+from app.schemas.ad import AdListResponse, AdResponse
+from app.services import ad_service
 
 router = APIRouter(prefix="/api/v1/categories", tags=["categories"])
 
@@ -67,3 +69,27 @@ async def list_categories(
     result = await db.execute(select(Category).order_by(Category.position))
     categories = list(result.scalars().all())
     return _build_tree(categories)
+
+
+@router.get("/{slug}/ads", response_model=AdListResponse)
+async def list_category_ads(
+    slug: str,
+    page: int = 1,
+    per_page: int = 20,
+    sort: str = "newest",
+    db: AsyncSession = Depends(get_db),
+) -> AdListResponse:
+    result = await ad_service.list_ads(
+        db,
+        page=page,
+        per_page=per_page,
+        category_slug=slug,
+        sort=sort,
+    )
+    return AdListResponse(
+        items=[AdResponse.model_validate(ad) for ad in result["items"]],
+        total=result["total"],
+        page=result["page"],
+        per_page=result["per_page"],
+        pages=result["pages"],
+    )

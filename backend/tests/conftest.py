@@ -63,6 +63,10 @@ async def override_get_db() -> AsyncGenerator[AsyncSession, None]:
 @pytest_asyncio.fixture
 async def async_client() -> AsyncGenerator[AsyncClient, None]:
     from app.main import app
+    from app.middleware.rate_limit import reset_limiter
+
+    # Reset rate limiter state between tests
+    reset_limiter()
 
     app.dependency_overrides[get_db] = override_get_db
     app.dependency_overrides[get_settings] = get_test_settings
