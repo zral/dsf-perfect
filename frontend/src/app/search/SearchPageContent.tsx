@@ -3,14 +3,18 @@
 import { useCallback, useMemo } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { PackageOpen } from "lucide-react";
+import { PackageOpen, Bookmark } from "lucide-react";
 import { useInfiniteSearch } from "@/hooks/useSearch";
 import type { SearchParams } from "@/hooks/useSearch";
+import { useAuth } from "@/hooks/useAuth";
+import { useCreateSavedSearch } from "@/hooks/useSavedSearches";
+import { useToastStore } from "@/stores/toastStore";
 import AdGrid from "@/components/ad/AdGrid";
 import FilterPanel from "@/components/search/FilterPanel";
 import type { FilterValues } from "@/components/search/FilterPanel";
 import type { AdCondition } from "@/types/ad";
 import EmptyState from "@/components/common/EmptyState";
+import Button from "@/components/common/Button";
 
 function parseSearchParams(sp: URLSearchParams): SearchParams {
   const params: SearchParams = {};
@@ -46,9 +50,40 @@ function searchParamsToFilterValues(params: SearchParams): FilterValues {
 export default function SearchPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { isAuthenticated } = useAuth();
+  const createSavedSearch = useCreateSavedSearch();
+  const addToast = useToastStore((s) => s.addToast);
 
   const params = parseSearchParams(searchParams);
   const filters = searchParamsToFilterValues(params);
+
+  const hasActiveSearch = !!(params.q || params.category || params.condition || params.price_min !== undefined || params.price_max !== undefined);
+
+  const handleSaveSearch = useCallback(() => {
+    if (!isAuthenticated) {
+      router.push("/login");
+      return;
+    }
+    createSavedSearch.mutate(
+      {
+        query: params.q,
+        category_slug: params.category,
+        filters: {
+          price_min: params.price_min,
+          price_max: params.price_max,
+          condition: params.condition,
+        },
+      },
+      {
+        onSuccess: () => {
+          addToast("Soket er lagret!", "success");
+        },
+        onError: () => {
+          addToast("Kunne ikke lagre soket. Prov igjen.", "error");
+        },
+      }
+    );
+  }, [isAuthenticated, router, params, createSavedSearch, addToast]);
 
   const {
     data,
@@ -154,9 +189,23 @@ export default function SearchPageContent() {
             )}
           </div>
 
-          {/* Mobile filter button */}
-          <div className="lg:hidden">
-            <FilterPanel filters={filters} onChange={handleFilterChange} />
+          {/* Save search + Mobile filter button */}
+          <div className="flex items-center gap-2">
+            {hasActiveSearch && (
+              <Button
+                variant="secondary"
+                size="sm"
+                icon={<Bookmark className="h-3.5 w-3.5" />}
+                onClick={handleSaveSearch}
+                isLoading={createSavedSearch.isPending}
+              >
+                <span className="hidden sm:inline">Lagre sok</span>
+                <span className="sm:hidden">Lagre</span>
+              </Button>
+            )}
+            <div className="lg:hidden">
+              <FilterPanel filters={filters} onChange={handleFilterChange} />
+            </div>
           </div>
         </div>
 

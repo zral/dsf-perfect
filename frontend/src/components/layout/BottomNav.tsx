@@ -10,7 +10,7 @@ const navItems = [
   { label: "Søk", icon: Search, href: "/search" },
   { label: "Legg ut", icon: PlusCircle, href: "/ad/new" },
   { label: "Meldinger", icon: MessageCircle, href: "/meldinger" },
-  { label: "Profil", icon: User, href: "/login" },
+  { label: "Profil", icon: User, href: "/profile" },
 ];
 
 export default function BottomNav() {
