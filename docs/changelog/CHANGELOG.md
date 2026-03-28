@@ -3,6 +3,29 @@
 Alle vesentlige endringer i prosjektet dokumenteres her.
 Format basert på [Keep a Changelog](https://keepachangelog.com/).
 
+## [2026-03-28] — Fase 3: Søk og oppdagelse
+
+### Lagt til
+- Fulltekstsøk med ILIKE i tittel og beskrivelse (AND-logikk mellom ord)
+- Autocomplete/suggest med prefix-match og fallback
+- Søkerouter: GET /search med alle filtre, GET /search/suggest
+- Avansert filtrering: kategori, pris, tilstand, sted, sortering
+- Kategori-underkategorier i seed (19 sub-kategorier)
+- Frontend: SearchBar med autocomplete, tastaturnavigasjon og debounce
+- Frontend: Søkeresultatside /search med URL-synkroniserte filtre
+- Frontend: EmptyState komponent for "Ingen treff"
+- Frontend: Sted-filter i FilterPanel
+- Header og forside med ekte SearchBar
+- 15 nye backend-tester (47 totalt, 100% bestått)
+
+### Fikset
+- Kategori-underkategorier (tech-debt fra Fase 2)
+
+### Refs
+- Design: [docs/design/2026-03-28-finn-fase3-sok.md](../design/2026-03-28-finn-fase3-sok.md)
+
+---
+
 ## [2026-03-28] — Fase 2: Kjerneprodukt
 
 ### Lagt til
