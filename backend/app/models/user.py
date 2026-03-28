@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 from sqlalchemy import String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column
@@ -23,9 +23,9 @@ class User(Base):
     location: Mapped[str | None] = mapped_column(String(255), nullable=True)
     rating: Mapped[float] = mapped_column(default=0.0, server_default="0.0")
     is_verified: Mapped[bool] = mapped_column(default=False, server_default="false")
-    created_at: Mapped[datetime] = mapped_column(server_default=func.now(), default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(server_default=func.now(), default=lambda: datetime.now(timezone.utc))
     updated_at: Mapped[datetime] = mapped_column(
         server_default=func.now(),
-        default=datetime.utcnow,
-        onupdate=datetime.utcnow,
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc),
     )

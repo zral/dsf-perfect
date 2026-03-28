@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 from sqlalchemy import ForeignKey, String, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -23,7 +23,7 @@ class Category(Base):
     slug: Mapped[str] = mapped_column(String(255), unique=True, nullable=False, index=True)
     icon: Mapped[str | None] = mapped_column(String(100), nullable=True)
     position: Mapped[int] = mapped_column(default=0, server_default="0")
-    created_at: Mapped[datetime] = mapped_column(server_default=func.now(), default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(server_default=func.now(), default=lambda: datetime.now(timezone.utc))
 
     parent: Mapped["Category | None"] = relationship(
         "Category",

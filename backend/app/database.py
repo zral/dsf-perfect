@@ -1,7 +1,9 @@
 from collections.abc import AsyncGenerator
+from datetime import datetime
 
+from sqlalchemy import DateTime
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
-from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.orm import DeclarativeBase, MappedAsDataclass
 
 from app.config import get_settings
 
@@ -12,7 +14,10 @@ async_session_factory = async_sessionmaker(engine, class_=AsyncSession, expire_o
 
 
 class Base(DeclarativeBase):
-    pass
+    # Map Python datetime to TIMESTAMPTZ globally
+    type_annotation_map = {
+        datetime: DateTime(timezone=True),
+    }
 
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:

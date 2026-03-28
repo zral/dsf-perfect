@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 from sqlalchemy import ForeignKey, String, func
 from sqlalchemy.orm import Mapped, mapped_column
@@ -22,5 +22,5 @@ class RefreshToken(Base):
     )
     token_hash: Mapped[str] = mapped_column(String(64), nullable=False, unique=True)
     expires_at: Mapped[datetime] = mapped_column(nullable=False)
-    created_at: Mapped[datetime] = mapped_column(server_default=func.now(), default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(server_default=func.now(), default=lambda: datetime.now(timezone.utc))
     revoked: Mapped[bool] = mapped_column(default=False, server_default="false")
