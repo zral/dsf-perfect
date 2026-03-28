@@ -5,6 +5,7 @@ import { MapPin, Clock } from "lucide-react";
 import { motion } from "framer-motion";
 import PriceTag from "./PriceTag";
 import { ConditionBadge } from "./Badge";
+import ImagePlaceholder from "./ImagePlaceholder";
 import type { Ad } from "@/types/ad";
 
 function timeAgo(dateString: string): string {
@@ -25,17 +26,20 @@ function timeAgo(dateString: string): string {
 
 interface AdCardProps {
   ad: Ad;
+  index?: number;
 }
 
-export default function AdCard({ ad }: AdCardProps) {
+export default function AdCard({ ad, index = 0 }: AdCardProps) {
   const thumbnailUrl =
     ad.images.length > 0 ? ad.images[0].thumbnail_url : null;
 
   return (
     <Link href={`/ad/${ad.id}`}>
       <motion.article
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: Math.min(index * 0.05, 0.4) }}
         whileHover={{ y: -2 }}
-        transition={{ duration: 0.2 }}
         className="group bg-white rounded-2xl border border-gray-100 overflow-hidden
           hover:shadow-lg hover:border-gray-200 transition-shadow duration-300"
       >
@@ -48,21 +52,7 @@ export default function AdCard({ ad }: AdCardProps) {
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-gray-300">
-              <svg
-                className="h-12 w-12"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.5}
-                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                />
-              </svg>
-            </div>
+            <ImagePlaceholder />
           )}
           <div className="absolute top-2 left-2">
             <ConditionBadge condition={ad.condition} />

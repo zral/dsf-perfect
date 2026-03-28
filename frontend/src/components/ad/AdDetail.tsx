@@ -9,6 +9,8 @@ import { ConditionBadge, StatusBadge } from "./Badge";
 import Button from "@/components/common/Button";
 import { useAuth } from "@/hooks/useAuth";
 import { useSendMessage } from "@/hooks/useMessages";
+import SimilarAds from "./SimilarAds";
+import { useToastStore } from "@/stores/toastStore";
 import type { Ad } from "@/types/ad";
 import { AdStatus } from "@/types/ad";
 
@@ -58,6 +60,7 @@ export default function AdDetail({ ad }: AdDetailProps) {
   const router = useRouter();
   const { user, isAuthenticated } = useAuth();
   const sendMessage = useSendMessage();
+  const addToast = useToastStore((s) => s.addToast);
   const [contactMessage, setContactMessage] = useState("");
   const [showContactModal, setShowContactModal] = useState(false);
   const [isSending, setIsSending] = useState(false);
@@ -81,11 +84,12 @@ export default function AdDetail({ ad }: AdDetailProps) {
         ad_id: ad.id,
         content,
       });
+      addToast("Melding sendt", "success");
       setShowContactModal(false);
       setContactMessage("");
       router.push(`/meldinger/${result.conversation_id}`);
     } catch {
-      // Error handled by mutation
+      addToast("Kunne ikke sende melding. Prøv igjen.", "error");
     } finally {
       setIsSending(false);
     }
@@ -229,6 +233,9 @@ export default function AdDetail({ ad }: AdDetailProps) {
           </div>
         </div>
       </div>
+
+      {/* Similar ads */}
+      <SimilarAds adId={ad.id} />
 
       {/* Contact modal */}
       {showContactModal && (
