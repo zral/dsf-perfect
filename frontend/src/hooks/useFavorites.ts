@@ -2,15 +2,18 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/lib/api";
+import { getAccessToken } from "@/lib/auth";
 import type { Ad } from "@/types/ad";
 
 export function useFavorites() {
+  const token = getAccessToken();
   return useQuery({
     queryKey: ["favorites"],
     queryFn: async () => {
       const { data } = await api.get<Ad[]>("/api/v1/favorites");
       return data;
     },
+    enabled: !!token,
   });
 }
 

@@ -6,7 +6,6 @@ export interface SavedSearchFilters {
 
 export interface SavedSearch {
   id: string;
-  user_id: string;
   query: string | null;
   category_slug: string | null;
   filters: SavedSearchFilters;
@@ -21,7 +20,5 @@ export interface SavedSearchCreateRequest {
   notify?: boolean;
 }
 
-export interface SavedSearchListResponse {
-  items: SavedSearch[];
-  total: number;
-}
+// GET /api/v1/saved-searches returns SavedSearch[] directly (not wrapped)
+// See useSavedSearches hook for usage

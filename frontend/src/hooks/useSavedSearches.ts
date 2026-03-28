@@ -2,18 +2,21 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/lib/api";
+import { getAccessToken } from "@/lib/auth";
 import type {
   SavedSearch,
   SavedSearchCreateRequest,
 } from "@/types/saved-search";
 
 export function useSavedSearches() {
+  const token = getAccessToken();
   return useQuery({
     queryKey: ["savedSearches"],
     queryFn: async () => {
       const { data } = await api.get<SavedSearch[]>("/api/v1/saved-searches");
       return data;
     },
+    enabled: !!token,
   });
 }
 

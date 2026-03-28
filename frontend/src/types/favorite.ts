@@ -1,14 +1,8 @@
-import type { Ad } from "./ad";
-
-export interface Favorite {
+export interface FavoriteResponse {
   id: string;
-  user_id: string;
   ad_id: string;
   created_at: string;
-  ad: Ad;
 }
 
-export interface FavoriteListResponse {
-  items: Favorite[];
-  total: number;
-}
+// GET /api/v1/favorites returns Ad[] directly (not wrapped)
+// See useFavorites hook for usage
