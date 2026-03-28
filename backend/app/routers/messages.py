@@ -1,11 +1,13 @@
 import uuid
 
 from fastapi import APIRouter, Depends, WebSocket, WebSocketDisconnect, status
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import get_settings
-from app.database import get_db
+from app.database import async_session_factory, get_db
 from app.dependencies import get_current_user
+from app.models.conversation import Conversation
 from app.models.user import User
 from app.schemas.message import (
     ConversationResponse,
@@ -72,8 +74,27 @@ async def get_conversation_messages(
     result = await message_service.get_conversation_messages(
         db, conversation_id, current_user.id, page, per_page
     )
+    conv = result["conversation"]
+    # Build ConversationResponse for the current user
+    if conv.buyer_id == current_user.id:
+        other_user = conv.seller
+    else:
+        other_user = conv.buyer
+    ad_images = []
+    if conv.ad.images:
+        first_img = conv.ad.images[0]
+        ad_images = [{"url": first_img.url, "thumbnail_url": first_img.thumbnail_url}]
+    conversation_data = ConversationResponse.model_validate({
+        "id": conv.id,
+        "ad": {"id": conv.ad.id, "title": conv.ad.title, "images": ad_images},
+        "other_user": {"id": other_user.id, "name": other_user.name, "avatar_url": other_user.avatar_url},
+        "last_message": None,
+        "unread_count": 0,
+        "updated_at": conv.updated_at,
+    })
     return {
-        "messages": [MessageResponse.model_validate(m) for m in result["messages"]],
+        "conversation": conversation_data.model_dump(mode="json"),
+        "messages": [MessageResponse.model_validate(m).model_dump(mode="json") for m in result["messages"]],
         "total": result["total"],
         "page": result["page"],
     }
@@ -104,9 +125,6 @@ async def send_message(
     # Notify via WebSocket if recipient is online
     msg_response = MessageResponse.model_validate(message)
     # Determine recipient
-    from sqlalchemy import select
-    from app.models.conversation import Conversation
-
     conv_result = await db.execute(
         select(Conversation).where(Conversation.id == message.conversation_id)
     )
@@ -154,8 +172,6 @@ async def websocket_endpoint(websocket: WebSocket, token: str = "") -> None:
             data = await websocket.receive_json()
             if data.get("type") == "message":
                 # Handle message sending via WebSocket
-                from app.database import async_session_factory
-
                 async with async_session_factory() as db:
                     try:
                         conversation_id = uuid.UUID(data["conversation_id"])
@@ -176,9 +192,6 @@ async def websocket_endpoint(websocket: WebSocket, token: str = "") -> None:
                         await websocket.send_json(msg_data)
 
                         # Send to recipient
-                        from sqlalchemy import select
-                        from app.models.conversation import Conversation
-
                         conv_result = await db.execute(
                             select(Conversation).where(
                                 Conversation.id == conversation_id

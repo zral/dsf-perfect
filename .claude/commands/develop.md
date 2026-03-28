@@ -76,13 +76,20 @@ Du er i DEVELOP-fasen av DSF Development Loop.
    - **Enum-verdier**: Sjekk at frontend sender gyldige enum-verdier som matcher backend-definisjonen.
    - **FormData/multipart**: Hvis kallet bruker FormData, sjekk at `Content-Type` ALDRI settes manuelt. Axios/fetch setter korrekt `multipart/form-data; boundary=...` automatisk. Manuell header mangler boundary og vil feile.
 
+   **RESPONS-STRUKTUR-VERIFISERING** (PROSESSFORBEDRING PE5, LEARNING 012):
+   For hvert GET-kall der frontend definerer en response-type (TypeScript interface), verifiser at:
+   - **Alle felter** i frontend TypeScript-interfacet finnes i backend-responsen
+   - Sammenlign felt-for-felt: les frontend-typen, deretter les backend router-funksjonen og sjekk hva den faktisk returnerer
+   - Spesielt viktig for **sammensatte responser** (wrappede objekter som `{ entity, items[], total, page }`)
+   - Eksempel paa feil dette fanger: Frontend forventer `{ conversation, messages, total }` men backend returnerer bare `{ messages, total }`
+
    Logg resultat i iterasjonsloggen:
    ```markdown
    ## Smoke Test: Frontend↔Backend
-   | Frontend kall | Backend endepunkt | HTTP | Datatyper OK? | Match |
-   |--------------|-------------------|------|---------------|-------|
-   | api.post("/api/v1/auth/login") | POST /api/v1/auth/login | POST | email:str, password:str ✅ | ✅ |
-   | api.post("/api/v1/ads", formData) | POST /api/v1/ads | POST | category_id:UUID ✅, no manual Content-Type ✅ | ✅ |
+   | Frontend kall | Backend endepunkt | HTTP | Datatyper OK? | Respons-felter OK? | Match |
+   |--------------|-------------------|------|---------------|-------------------|-------|
+   | api.post("/api/v1/auth/login") | POST /api/v1/auth/login | POST | email:str, password:str | N/A | OK |
+   | api.get("/api/v1/messages/conversations/${id}") | GET /conversations/{id} | GET | UUID i path | conversation, messages, total, page | OK |
    ```
 
 7. **Dokumenter utsatte krav** (PROSESSFORBEDRING PE2):

@@ -3,6 +3,43 @@
 Alle vesentlige endringer i prosjektet dokumenteres her.
 Format basert på [Keep a Changelog](https://keepachangelog.com/).
 
+## [2026-03-28] — Fase 4: Kommunikasjon
+
+### Lagt til
+- Meldingssystem mellom kjoper og selger knyttet til annonser
+- Conversation-modell med unik (ad, buyer, seller)-kombinasjon og samtale-deduplisering
+- Message-modell med is_read-status og tidsstempler
+- REST API: POST /messages (send melding / opprett samtale), GET /conversations, GET /conversations/{id}
+- GET /unread-count endepunkt for ulest-teller
+- Automatisk marking av meldinger som lest ved henting av samtale
+- WebSocket-endepunkt for sanntidslevering av meldinger med ConnectionManager
+- WebSocket-autentisering via JWT i query parameter
+- Frontend: ConversationList med siste melding, ulest-badge og tidsformatering
+- Frontend: ChatWindow med tidsstempel-gruppering (I dag, I gar, dato)
+- Frontend: MessageBubble med lest/ulest-indikatorer (check/dobbeltcheck)
+- Frontend: ChatInput med auto-resize textarea og Enter-sending
+- Frontend: /meldinger oversiktsside og /meldinger/[id] samtale-side
+- Frontend: "Kontakt selger"-knapp i AdDetail med modal for forstegangsmelding
+- Frontend: Ulest-teller i Header (desktop) og BottomNav (mobil) med 30s polling
+- Frontend: WebSocket-hook med auto-reconnect og cache-oppdatering
+- 12 nye backend-integrasjonstester (59 totalt, 100% bestaaende)
+
+### Fikset
+- Backend GET /conversations/{id} inkluderer naa conversation-metadata (review-funn K1)
+- Inline-imports i messages.py flyttet til toppen av filen (review-funn F2)
+
+### Dokumentert som teknisk gjeld
+- Typing-indikator via WebSocket (Should have, Fase 5)
+- Rate limiting paa meldinger 30/min per bruker (Should have, Fase 5)
+- Push-varsler (Could have, Fase 5 PWA)
+- Blokkering av brukere (Could have, Fase 6+)
+- Rapportering av meldinger (Could have, Fase 6+)
+
+### Refs
+- Design: [docs/design/2026-03-28-finn-fase4-kommunikasjon.md](../design/2026-03-28-finn-fase4-kommunikasjon.md)
+
+---
+
 ## [2026-03-28] — Fase 3: Søk og oppdagelse
 
 ### Lagt til

@@ -190,7 +190,13 @@ async def get_conversation_messages(
     """Get paginated messages for a conversation. Marks messages from other user as read."""
     # Verify conversation exists and user is participant
     result = await db.execute(
-        select(Conversation).where(Conversation.id == conversation_id)
+        select(Conversation)
+        .options(
+            selectinload(Conversation.ad).selectinload(Ad.images),
+            selectinload(Conversation.buyer),
+            selectinload(Conversation.seller),
+        )
+        .where(Conversation.id == conversation_id)
     )
     conversation = result.scalar_one_or_none()
     if not conversation:
@@ -239,6 +245,7 @@ async def get_conversation_messages(
     messages = list(msg_result.scalars().all())
 
     return {
+        "conversation": conversation,
         "messages": messages,
         "total": total,
         "page": page,

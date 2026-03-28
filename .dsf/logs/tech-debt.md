@@ -18,3 +18,8 @@ Alle designkrav som bevisst utsettes dokumenteres her med kilde og planlagt fase
 | Søkehistorikk (localStorage) | Could | Design Fase 3 | Fase 4 | Åpen | 2026-03-28 |
 | Highlight søkeord i resultater | Could | Design Fase 3 | Fase 4 | Åpen | 2026-03-28 |
 | Rate limiting på suggest-endepunkt (10/min) | Should | Design Fase 3 | Fase 4 | Åpen | 2026-03-28 |
+| Typing-indikator via WebSocket | Should | Design Fase 4 | Fase 5 | Åpen | 2026-03-28 |
+| Rate limiting på meldinger (30/min per bruker) | Should | Design Fase 4 | Fase 5 | Åpen | 2026-03-28 |
+| Push-varsler for meldinger | Could | Design Fase 4 | Fase 5 (PWA) | Åpen | 2026-03-28 |
+| Blokkering av brukere | Could | Design Fase 4 | Fase 6+ | Åpen | 2026-03-28 |
+| Rapportering av meldinger | Could | Design Fase 4 | Fase 6+ | Åpen | 2026-03-28 |
