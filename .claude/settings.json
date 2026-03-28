@@ -1,0 +1,30 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.prompt // \"\"' | grep -q '/develop' && { count=$(find docs/design/ -name '*.md' 2>/dev/null | head -1); if [ -z \"$count\" ]; then echo '{\"hookSpecificOutput\":{\"hookEventName\":\"UserPromptSubmit\",\"additionalContext\":\"⚠️ GATE VIOLATION: Ingen design-dokumenter funnet i docs/design/. Kjør /design først og få godkjenning før du starter utvikling.\"}}'; fi; } || true",
+            "timeout": 5,
+            "statusMessage": "Sjekker design-gate..."
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r 'select(.tool_input.command | test(\"test\")) | \"[\" + (now | strftime(\"%Y-%m-%d %H:%M:%S\")) + \"] Command: \" + .tool_input.command + \"\\nOutput: \" + (.tool_response.stdout // \"no output\") + \"\\nExit: \" + (.tool_response.exitCode // 0 | tostring) + \"\\n---\"' >> .dsf/logs/test-output.log 2>/dev/null || true",
+            "timeout": 5,
+            "statusMessage": "Logger testresultater..."
+          }
+        ]
+      }
+    ]
+  }
+}
