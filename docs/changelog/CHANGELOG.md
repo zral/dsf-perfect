@@ -3,6 +3,34 @@
 Alle vesentlige endringer i prosjektet dokumenteres her.
 Format basert på [Keep a Changelog](https://keepachangelog.com/).
 
+## [2026-03-28] — Fase 2: Kjerneprodukt
+
+### Lagt til
+- Ad og AdImage datamodeller med enums (PriceType, AdCondition, AdStatus)
+- Komplett CRUD API for annonser med paginering og filtrering
+- Bildeopplasting med Pillow — resize, thumbnail, WebP-konvertering
+- Rate limiting middleware (5/min login, 3/min register, 10/min opprett annonse)
+- JWT secret hard-fail i production-miljø
+- Kategori/{slug}/ads endepunkt
+- Frontend: AdCard, AdGrid, AdDetail, ImageGallery, ImageUpload, PriceTag, Badge
+- Frontend: Flersteg annonse-skjema (kategori→detaljer→bilder→forhåndsvis)
+- Frontend: Annonsevisning med bildegalleri
+- Frontend: Kategoriside med filtre og paginering
+- Frontend: FilterPanel og SortSelect komponenter
+- Oppdatert forside med ekte annonsedata
+- 19 nye backend-tester (32 totalt, 100% bestått)
+
+### Fikset
+- Rate limiting (tech-debt fra Fase 1)
+- JWT secret hardening i production (tech-debt fra Fase 1)
+- AdForm henter kategorier fra API med ekte UUID-er (review-funn K1)
+- Axios FormData uten manuell Content-Type header (review-funn K2)
+
+### Refs
+- Design: [docs/design/2026-03-28-finn-fase2-kjerneprodukt.md](../design/2026-03-28-finn-fase2-kjerneprodukt.md)
+
+---
+
 ## [2026-03-28] — Fase 1: Grunnmur
 
 ### Lagt til
