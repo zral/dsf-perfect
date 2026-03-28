@@ -37,7 +37,7 @@ export default function Header() {
 
           {/* Actions */}
           <div className="hidden md:flex items-center gap-3">
-            <Link href="/ny-annonse">
+            <Link href="/ad/new">
               <Button
                 variant="primary"
                 size="md"
@@ -84,7 +84,7 @@ export default function Header() {
                       className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-1.5 z-50"
                     >
                       <Link
-                        href="/profil"
+                        href="/login"
                         className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                         onClick={() => setUserMenuOpen(false)}
                       >

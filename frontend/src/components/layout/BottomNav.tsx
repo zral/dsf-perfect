@@ -7,10 +7,10 @@ import { useUnreadCount } from "@/hooks/useMessages";
 
 const navItems = [
   { label: "Hjem", icon: Home, href: "/" },
-  { label: "Søk", icon: Search, href: "/sok" },
-  { label: "Legg ut", icon: PlusCircle, href: "/ny-annonse" },
+  { label: "Søk", icon: Search, href: "/search" },
+  { label: "Legg ut", icon: PlusCircle, href: "/ad/new" },
   { label: "Meldinger", icon: MessageCircle, href: "/meldinger" },
-  { label: "Profil", icon: User, href: "/profil" },
+  { label: "Profil", icon: User, href: "/login" },
 ];
 
 export default function BottomNav() {
