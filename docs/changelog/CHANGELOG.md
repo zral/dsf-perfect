@@ -3,6 +3,35 @@
 Alle vesentlige endringer i prosjektet dokumenteres her.
 Format basert på [Keep a Changelog](https://keepachangelog.com/).
 
+## [2026-03-28] — Fase 5: PWA (Progressive Web App)
+
+### Lagt til
+- Service worker (sw.js) med differensierte caching-strategier: cache-first for app shell, network-first for API, stale-while-revalidate for bilder
+- Offline fallback-side (offline.html) med Markedsplass-branding og "Proev igjen"-knapp
+- PWA-ikoner: 192x192, 512x512 og 512x512 maskable
+- Komplett manifest.json med app-metadata, ikoner og standalone-modus
+- ServiceWorkerRegistration komponent med automatisk SW-registrering
+- InstallPrompt komponent ("Legg til paa hjemskjermen") med 7-dagers dismiss-hukommelse
+- OfflineIndicator komponent med online/offline/reconnected-varsler
+- PWA meta-tags i layout.tsx for iOS, Android og Windows
+- Oppdatert layout.tsx med SW-registrering, install prompt og offline-indikator
+
+### Sikkerhet
+- Service worker cacher kun GET-requests — ingen auth-tokens eller sensitive data i cache
+- Versjonerte cache-names med automatisk opprydding av gamle cacher
+- Ingen cross-origin caching, non-HTTP-protokoller blokkeres
+
+### Dokumentert som teknisk gjeld
+- Cache size limit (ingen maks-grense paa API/bilde-cache)
+- SW update notification (ingen varsel naar ny versjon er tilgjengelig)
+- Push-varsler (krever backend push-infrastruktur)
+- Full offline CRUD
+
+### Refs
+- Design: [docs/design/2026-03-28-finn-fase5-pwa.md](../design/2026-03-28-finn-fase5-pwa.md)
+
+---
+
 ## [2026-03-28] — Fase 4: Kommunikasjon
 
 ### Lagt til
