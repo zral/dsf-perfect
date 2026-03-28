@@ -3,6 +3,44 @@
 Alle vesentlige endringer i prosjektet dokumenteres her.
 Format basert på [Keep a Changelog](https://keepachangelog.com/).
 
+## [2026-03-28] — Fase 7: Sosial
+
+### Lagt til
+- Favorite-modell med unik (user_id, ad_id) constraint og cascade delete
+- SavedSearch-modell med query, category_slug, JSON-filtre og notify-toggle
+- Favorite service: add (idempotent), remove, list (med Ad eager loading), is_favorited
+- SavedSearch service: create, list, delete med eiersjekk (403 ved andres)
+- POST/DELETE /api/v1/ads/{id}/favorite (auth) for toggle-favoritt
+- GET /api/v1/favorites (auth) returnerer brukerens favorittannonser som Ad[]
+- GET/POST/DELETE /api/v1/saved-searches (auth) for lagrede sok CRUD
+- GET /api/v1/users/{id} offentlig brukerprofil (uten email/passord)
+- GET /api/v1/users/{id}/ads brukerens aktive annonser med paginering
+- PATCH /api/v1/users/me for profiloppdatering (navn, telefon, lokasjon)
+- Frontend: FavoriteButton med hjerte-animasjon (framer-motion scale + rod farge)
+- Frontend: ShareButton med Web Share API og fallback til clipboard copy
+- Frontend: /profile profilside med brukerinfo, navigasjon og utlogging
+- Frontend: /profile/favorites mine favoritter med AdGrid
+- Frontend: /profile/saved-searches lagrede sok med filter-visning og slett
+- Frontend: /user/[id] offentlig brukerside med SSR-metadata og brukerens annonser
+- Frontend: useFavorites, useToggleFavorite, useIsFavorited hooks med auth-guard
+- Frontend: useSavedSearches, useCreateSavedSearch, useDeleteSavedSearch hooks med auth-guard
+- Frontend: usePublicUser, useUserAds hooks
+- 11 nye backend-integrasjonstester (72 totalt, 100% bestaende)
+
+### Fikset
+- Auth-guards lagt til paa useFavorites og useSavedSearches (LEARNING 013)
+- Frontend type-definisjoner oppdatert til aa matche faktisk backend respons-struktur (LEARNING 012)
+
+### Dokumentert som teknisk gjeld
+- StarRating-komponent duplisert mellom profile og user-side
+- Brukeranmeldelser/rating-system (Won't have)
+- Varsler ved nye treff paa lagrede sok (Won't have, krever bakgrunnsjobber)
+
+### Refs
+- Design: [docs/design/2026-03-28-finn-fase7-sosial.md](../design/2026-03-28-finn-fase7-sosial.md)
+
+---
+
 ## [2026-03-28] — Fase 6: Polish
 
 ### Lagt til
