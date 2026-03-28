@@ -1,24 +1,44 @@
 "use client";
 
-import { Search, Car, Home, Shirt, Smartphone, Sofa, Dumbbell, Baby, Bike, BookOpen, Palette, Wrench, Gamepad2 } from "lucide-react";
+import Link from "next/link";
+import {
+  Search,
+  Car,
+  Home,
+  Shirt,
+  Smartphone,
+  Sofa,
+  Dumbbell,
+  Baby,
+  Bike,
+  BookOpen,
+  Palette,
+  Wrench,
+  Gamepad2,
+  ArrowRight,
+} from "lucide-react";
 import { motion } from "framer-motion";
+import { useAds } from "@/hooks/useAds";
+import AdGrid from "@/components/ad/AdGrid";
 
 const categories = [
-  { name: "Bil og motor", icon: Car, color: "bg-blue-50 text-blue-600" },
-  { name: "Eiendom", icon: Home, color: "bg-emerald-50 text-emerald-600" },
-  { name: "Klær og mote", icon: Shirt, color: "bg-pink-50 text-pink-600" },
-  { name: "Elektronikk", icon: Smartphone, color: "bg-purple-50 text-purple-600" },
-  { name: "Møbler og interiør", icon: Sofa, color: "bg-amber-50 text-amber-600" },
-  { name: "Sport og fritid", icon: Dumbbell, color: "bg-red-50 text-red-600" },
-  { name: "Barn og baby", icon: Baby, color: "bg-cyan-50 text-cyan-600" },
-  { name: "Sykkel", icon: Bike, color: "bg-green-50 text-green-600" },
-  { name: "Bøker og media", icon: BookOpen, color: "bg-indigo-50 text-indigo-600" },
-  { name: "Kunst og hobby", icon: Palette, color: "bg-orange-50 text-orange-600" },
-  { name: "Verktøy", icon: Wrench, color: "bg-slate-50 text-slate-600" },
-  { name: "Gaming", icon: Gamepad2, color: "bg-violet-50 text-violet-600" },
+  { name: "Bil og motor", slug: "bil-og-motor", icon: Car, color: "bg-blue-50 text-blue-600" },
+  { name: "Eiendom", slug: "eiendom", icon: Home, color: "bg-emerald-50 text-emerald-600" },
+  { name: "Klær og mote", slug: "klaer-og-mote", icon: Shirt, color: "bg-pink-50 text-pink-600" },
+  { name: "Elektronikk", slug: "elektronikk", icon: Smartphone, color: "bg-purple-50 text-purple-600" },
+  { name: "Møbler og interiør", slug: "mobler-og-interior", icon: Sofa, color: "bg-amber-50 text-amber-600" },
+  { name: "Sport og fritid", slug: "sport-og-fritid", icon: Dumbbell, color: "bg-red-50 text-red-600" },
+  { name: "Barn og baby", slug: "barn-og-baby", icon: Baby, color: "bg-cyan-50 text-cyan-600" },
+  { name: "Sykkel", slug: "sykkel", icon: Bike, color: "bg-green-50 text-green-600" },
+  { name: "Bøker og media", slug: "boker-og-media", icon: BookOpen, color: "bg-indigo-50 text-indigo-600" },
+  { name: "Kunst og hobby", slug: "kunst-og-hobby", icon: Palette, color: "bg-orange-50 text-orange-600" },
+  { name: "Verktøy", slug: "verktoy", icon: Wrench, color: "bg-slate-50 text-slate-600" },
+  { name: "Gaming", slug: "gaming", icon: Gamepad2, color: "bg-violet-50 text-violet-600" },
 ];
 
 export default function HomePage() {
+  const { data, isLoading } = useAds({ per_page: 8, sort: "newest" });
+
   return (
     <div>
       {/* Hero Section */}
@@ -76,31 +96,32 @@ export default function HomePage() {
             {categories.map((category, index) => {
               const Icon = category.icon;
               return (
-                <motion.button
-                  key={category.name}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: 0.05 * index }}
-                  className="group flex flex-col items-center gap-3 p-4 sm:p-5 rounded-2xl border border-gray-100
-                    hover:border-gray-200 hover:shadow-md transition-all duration-200 cursor-pointer bg-white"
-                >
-                  <div
-                    className={`h-12 w-12 rounded-xl flex items-center justify-center ${category.color}
-                      group-hover:scale-110 transition-transform duration-200`}
+                <Link key={category.name} href={`/category/${category.slug}`}>
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: 0.05 * index }}
+                    className="group flex flex-col items-center gap-3 p-4 sm:p-5 rounded-2xl border border-gray-100
+                      hover:border-gray-200 hover:shadow-md transition-all duration-200 cursor-pointer bg-white"
                   >
-                    <Icon className="h-6 w-6" />
-                  </div>
-                  <span className="text-xs sm:text-sm font-medium text-gray-700 text-center leading-tight">
-                    {category.name}
-                  </span>
-                </motion.button>
+                    <div
+                      className={`h-12 w-12 rounded-xl flex items-center justify-center ${category.color}
+                        group-hover:scale-110 transition-transform duration-200`}
+                    >
+                      <Icon className="h-6 w-6" />
+                    </div>
+                    <span className="text-xs sm:text-sm font-medium text-gray-700 text-center leading-tight">
+                      {category.name}
+                    </span>
+                  </motion.div>
+                </Link>
               );
             })}
           </div>
         </motion.div>
       </section>
 
-      {/* Latest listings placeholder */}
+      {/* Latest listings */}
       <section className="bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
           <motion.div
@@ -108,32 +129,29 @@ export default function HomePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
           >
-            <h2
-              className="text-xl sm:text-2xl font-bold text-gray-900 mb-8"
-              style={{ fontFamily: "var(--font-heading)" }}
-            >
-              Nyeste annonser
-            </h2>
-
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="bg-white rounded-2xl border border-gray-100 overflow-hidden"
-                >
-                  <div className="aspect-[4/3] bg-gray-100 animate-pulse"></div>
-                  <div className="p-3 sm:p-4 space-y-2">
-                    <div className="h-4 bg-gray-100 rounded-lg w-3/4 animate-pulse"></div>
-                    <div className="h-3 bg-gray-100 rounded-lg w-1/2 animate-pulse"></div>
-                    <div className="h-5 bg-blue-50 rounded-lg w-1/3 animate-pulse"></div>
-                  </div>
-                </div>
-              ))}
+            <div className="flex items-center justify-between mb-8">
+              <h2
+                className="text-xl sm:text-2xl font-bold text-gray-900"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                Nyeste annonser
+              </h2>
+              <Link
+                href="/category/elektronikk"
+                className="flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors"
+              >
+                Se alle annonser
+                <ArrowRight className="h-4 w-4" />
+              </Link>
             </div>
 
-            <p className="text-center text-sm text-gray-400 mt-8">
-              Annonser kommer snart
-            </p>
+            <AdGrid ads={data?.items} isLoading={isLoading} />
+
+            {data?.items.length === 0 && !isLoading && (
+              <p className="text-center text-sm text-gray-400 mt-8">
+                Ingen annonser ennå. Vær den første til å legge ut!
+              </p>
+            )}
           </motion.div>
         </div>
       </section>
