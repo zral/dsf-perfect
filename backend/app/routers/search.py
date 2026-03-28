@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
+from app.middleware.rate_limit import rate_limit
 from app.schemas.ad import AdListResponse, AdResponse
 from app.schemas.search import SearchParams, SuggestResponse, SuggestionItem
 from app.services import search_service
@@ -44,7 +45,11 @@ async def search_ads(
     }
 
 
-@router.get("/suggest", response_model=SuggestResponse)
+@router.get(
+    "/suggest",
+    response_model=SuggestResponse,
+    dependencies=[Depends(rate_limit(max_requests=10, window_seconds=60))],
+)
 async def suggest(
     q: str = "",
     limit: int = 5,

@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
 from app.database import Base, engine
-from app.routers import ads, auth, categories, search, users
+from app.routers import ads, auth, categories, messages, search, users
 
 
 @asynccontextmanager
@@ -38,6 +38,7 @@ app.include_router(users.router)
 app.include_router(categories.router)
 app.include_router(ads.router)
 app.include_router(search.router)
+app.include_router(messages.router)
 
 
 @app.get("/")
