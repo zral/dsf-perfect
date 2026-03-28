@@ -6,6 +6,8 @@ import { MapPin, Clock, Eye, User, ChevronRight, MessageCircle } from "lucide-re
 import ImageGallery from "./ImageGallery";
 import PriceTag from "./PriceTag";
 import { ConditionBadge, StatusBadge } from "./Badge";
+import FavoriteButton from "./FavoriteButton";
+import ShareButton from "./ShareButton";
 import Button from "@/components/common/Button";
 import { useAuth } from "@/hooks/useAuth";
 import { useSendMessage } from "@/hooks/useMessages";
@@ -128,12 +130,18 @@ export default function AdDetail({ ad }: AdDetailProps) {
                 <StatusBadge status={ad.status} />
               )}
             </div>
-            <h1
-              className="text-xl font-bold text-gray-900"
-              style={{ fontFamily: "var(--font-heading)" }}
-            >
-              {ad.title}
-            </h1>
+            <div className="flex items-start justify-between gap-2">
+              <h1
+                className="text-xl font-bold text-gray-900 flex-1"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                {ad.title}
+              </h1>
+              <div className="flex items-center gap-2 shrink-0">
+                <FavoriteButton adId={ad.id} size="md" />
+                <ShareButton ad={{ id: ad.id, title: ad.title }} size="md" />
+              </div>
+            </div>
             <PriceTag
               price={ad.price}
               priceType={ad.price_type}
@@ -181,12 +189,18 @@ export default function AdDetail({ ad }: AdDetailProps) {
                   <StatusBadge status={ad.status} />
                 )}
               </div>
-              <h1
-                className="text-xl font-bold text-gray-900"
-                style={{ fontFamily: "var(--font-heading)" }}
-              >
-                {ad.title}
-              </h1>
+              <div className="flex items-start justify-between gap-2">
+                <h1
+                  className="text-xl font-bold text-gray-900 flex-1"
+                  style={{ fontFamily: "var(--font-heading)" }}
+                >
+                  {ad.title}
+                </h1>
+                <div className="flex items-center gap-2 shrink-0">
+                  <FavoriteButton adId={ad.id} size="md" />
+                  <ShareButton ad={{ id: ad.id, title: ad.title }} size="md" />
+                </div>
+              </div>
               <PriceTag
                 price={ad.price}
                 priceType={ad.price_type}

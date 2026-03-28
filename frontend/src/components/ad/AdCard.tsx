@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import PriceTag from "./PriceTag";
 import { ConditionBadge } from "./Badge";
 import ImagePlaceholder from "./ImagePlaceholder";
+import FavoriteButton from "./FavoriteButton";
 import type { Ad } from "@/types/ad";
 
 function timeAgo(dateString: string): string {
@@ -56,6 +57,9 @@ export default function AdCard({ ad, index = 0 }: AdCardProps) {
           )}
           <div className="absolute top-2 left-2">
             <ConditionBadge condition={ad.condition} />
+          </div>
+          <div className="absolute top-2 right-2">
+            <FavoriteButton adId={ad.id} size="sm" />
           </div>
         </div>
 
