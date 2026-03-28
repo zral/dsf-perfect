@@ -3,6 +3,32 @@
 Alle vesentlige endringer i prosjektet dokumenteres her.
 Format basert på [Keep a Changelog](https://keepachangelog.com/).
 
+## [2026-03-28] — Fase 6: Polish
+
+### Lagt til
+- Skeleton loading for AdGrid (8 skeleton-kort) og AdDetail (komplett layout-skeleton)
+- Infinite scroll med IntersectionObserver for kategori- og soekesider (useInfiniteQuery)
+- SEO: dynamiske meta-tags (title, description, Open Graph) for annonse- og kategorisider med generateMetadata
+- Toast notification system med Zustand store, auto-dismiss (3s), desktop (bottom-right) og mobil (top) plassering
+- Custom 404-side med norsk tekst og link til forsiden
+- Bilde-placeholder (ImagePlaceholder) for annonser uten bilder, integrert i AdCard
+- Lignende annonser: backend GET /api/v1/ads/{id}/similar (samme kategori, maks 6, ekskluderer gjeldende)
+- Lignende annonser: frontend SimilarAds-komponent med horisontal scroll (mobil) og grid (desktop)
+- Error boundary med fallback-UI og "Proev igjen"-knapp, wrapper rundt main content i layout
+- InfiniteScroll-komponent med IntersectionObserver og 200px rootMargin
+- Skeleton-komponent (gjenbrukbar, text/circular/rectangular varianter)
+- AdCardSkeleton-komponent
+- 2 nye backend-tester for lignende annonser (61 totalt, 100% bestaende)
+
+### Dokumentert som teknisk gjeld
+- categoryNames-map duplisert mellom page.tsx og CategoryPageClient.tsx
+- Soekehistorikk og highlight (Won't have, utsatt)
+
+### Refs
+- Design: [docs/design/2026-03-28-finn-fase6-polish.md](../design/2026-03-28-finn-fase6-polish.md)
+
+---
+
 ## [2026-03-28] — Fase 5: PWA (Progressive Web App)
 
 ### Lagt til
