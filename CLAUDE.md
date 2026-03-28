@@ -126,12 +126,42 @@ Alle oppgaver følger denne loopen. Bruk `/sprint` for å kjøre hele loopen, el
 
 ## Selvforbedring
 
-Fabrikken lærer av egne feil gjennom:
+Fabrikken lærer av egne feil gjennom en automatisk feedback-loop:
 
-1. **Learnings-basen** (`.dsf/learnings/`): Konkrete erfaringer fra tidligere iterasjoner
-2. **Metrikksporing** (`.dsf/metrics/`): Kvantitative mål over tid
-3. **Prosessoppdatering**: CLAUDE.md og skills oppdateres når mønster identifiseres
-4. **Før hver iterasjon**: Sjekk learnings for relevant kontekst
+```
+Feil i iterasjon
+    ↓
+Retro identifiserer rotårsak (5 whys)
+    ↓
+Learning opprettet i .dsf/learnings/
+    ↓
+Prosessfil oppdatert automatisk (.claude/commands/*.md)
+    ↓
+Neste iterasjon bruker oppdatert prosess
+    ↓
+Retro sammenligner med forrige → færre feil?
+    ↓
+Ja: prosessforbedring fungerer
+Nei: analyser hvorfor, juster igjen
+```
+
+### Mekanismer
+
+1. **Learnings-basen** (`.dsf/learnings/`): Konkrete erfaringer med nøkkelord for søk
+2. **Metrikksporing** (`.dsf/metrics/`): Kvantitative mål med tidsbruk per fase
+3. **Automatisk prosessoppdatering**: Retro-fasen oppdaterer skills direkte — ikke bare foreslår
+4. **Learnings-referanser i sjekklister**: `(LEARNING NNN)` i review- og develop-sjekklister
+5. **Effektivitetsanalyse**: Retro sammenligner med forrige iterasjon
+6. **Teknisk gjeld-register** (`.dsf/logs/tech-debt.md`): Sporer utsatte krav
+
+### Prosessforbedringer implementert
+Denne seksjonen oppdateres automatisk av retro-fasen.
+
+| # | Forbedring | Implementert i | Læring | Dato |
+|---|-----------|----------------|--------|------|
+| PE1 | Smoke test frontend↔backend i develop | develop.md steg 6 | 001 | 2026-03-28 |
+| PE2 | MoSCoW-prioritering + tech-debt register | design.md steg 6, develop.md steg 7 | 002 | 2026-03-28 |
+| PE3 | Test-stubs fra testplan i develop | develop.md steg 2 | 005 | 2026-03-28 |
 
 ### Metriker som spores
 - Antall iterasjoner før godkjent
