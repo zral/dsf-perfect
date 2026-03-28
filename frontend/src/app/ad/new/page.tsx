@@ -9,12 +9,14 @@ import { useCreateAd } from "@/hooks/useAds";
 import { useUploadImage } from "@/hooks/useAds";
 import type { AdCreateRequest } from "@/types/ad";
 import type { UploadedImage } from "@/components/ad/ImageUpload";
+import { useToastStore } from "@/stores/toastStore";
 
 export default function NewAdPage() {
   const router = useRouter();
   const { isAuthenticated, isLoading: authLoading } = useAuth();
   const createAd = useCreateAd();
   const uploadImage = useUploadImage();
+  const addToast = useToastStore((s) => s.addToast);
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -37,9 +39,10 @@ export default function NewAdPage() {
         });
       }
 
+      addToast("Annonsen er publisert!", "success");
       router.push(`/ad/${ad.id}`);
     } catch {
-      // Error handled by React Query
+      addToast("Kunne ikke opprette annonsen. Prøv igjen.", "error");
     }
   };
 

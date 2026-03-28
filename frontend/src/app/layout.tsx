@@ -7,6 +7,8 @@ import BottomNav from "@/components/layout/BottomNav";
 import ServiceWorkerRegistration from "@/components/pwa/ServiceWorkerRegistration";
 import InstallPrompt from "@/components/pwa/InstallPrompt";
 import OfflineIndicator from "@/components/pwa/OfflineIndicator";
+import ErrorBoundary from "@/components/common/ErrorBoundary";
+import ToastContainer from "@/components/common/Toast";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -61,9 +63,12 @@ export default function RootLayout({
           <ServiceWorkerRegistration />
           <Header />
           <OfflineIndicator />
-          <main className="flex-1 pb-16 md:pb-0">{children}</main>
+          <ErrorBoundary>
+            <main className="flex-1 pb-16 md:pb-0">{children}</main>
+          </ErrorBoundary>
           <BottomNav />
           <InstallPrompt />
+          <ToastContainer />
         </Providers>
       </body>
     </html>

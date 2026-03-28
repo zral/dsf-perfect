@@ -1,17 +1,16 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { PackageOpen } from "lucide-react";
-import { useSearch } from "@/hooks/useSearch";
+import { useInfiniteSearch } from "@/hooks/useSearch";
 import type { SearchParams } from "@/hooks/useSearch";
 import AdGrid from "@/components/ad/AdGrid";
 import FilterPanel from "@/components/search/FilterPanel";
 import type { FilterValues } from "@/components/search/FilterPanel";
 import type { AdCondition } from "@/types/ad";
 import EmptyState from "@/components/common/EmptyState";
-import Button from "@/components/common/Button";
 
 function parseSearchParams(sp: URLSearchParams): SearchParams {
   const params: SearchParams = {};
@@ -29,8 +28,6 @@ function parseSearchParams(sp: URLSearchParams): SearchParams {
   if (condition) params.condition = condition;
   const sort = sp.get("sort");
   if (sort) params.sort = sort as SearchParams["sort"];
-  const page = sp.get("page");
-  if (page) params.page = Number(page);
   return params;
 }
 
@@ -53,10 +50,23 @@ export default function SearchPageContent() {
   const params = parseSearchParams(searchParams);
   const filters = searchParamsToFilterValues(params);
 
-  const { data, isLoading } = useSearch({
+  const {
+    data,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteSearch({
     ...params,
     per_page: 20,
   });
+
+  const allAds = useMemo(
+    () => data?.pages.flatMap((page) => page.items) ?? [],
+    [data]
+  );
+
+  const total = data?.pages[0]?.total;
 
   const updateUrl = useCallback(
     (newParams: Record<string, string | undefined>) => {
@@ -70,10 +80,8 @@ export default function SearchPageContent() {
         }
       });
 
-      // Reset page when filters change (unless page itself is being set)
-      if (!("page" in newParams)) {
-        sp.delete("page");
-      }
+      // Remove page param — infinite scroll handles pagination
+      sp.delete("page");
 
       const queryString = sp.toString();
       router.push(`/search${queryString ? `?${queryString}` : ""}`);
@@ -98,9 +106,7 @@ export default function SearchPageContent() {
             : undefined,
         sort: newFilters.sort !== "newest" ? newFilters.sort : undefined,
         location: newFilters.location || undefined,
-        q: newFilters.sort === "newest" && !newFilters.price_min && !newFilters.price_max && newFilters.conditions.length === 0 && !newFilters.location
-          ? params.q
-          : params.q,
+        q: params.q,
       });
     },
     [updateUrl, params.q]
@@ -110,7 +116,9 @@ export default function SearchPageContent() {
     router.push("/search");
   }, [router]);
 
-  const currentPage = params.page || 1;
+  const handleLoadMore = useCallback(() => {
+    fetchNextPage();
+  }, [fetchNextPage]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
@@ -134,14 +142,14 @@ export default function SearchPageContent() {
             </h1>
             {params.q && (
               <p className="text-sm text-gray-500 mt-1">
-                {data
-                  ? `${data.total} annonser funnet for \u00AB${params.q}\u00BB`
+                {total !== undefined
+                  ? `${total} annonser funnet for \u00AB${params.q}\u00BB`
                   : "Soker..."}
               </p>
             )}
-            {!params.q && data && (
+            {!params.q && total !== undefined && (
               <p className="text-sm text-gray-500 mt-1">
-                {data.total} annonser
+                {total} annonser
               </p>
             )}
           </div>
@@ -160,7 +168,7 @@ export default function SearchPageContent() {
 
           {/* Results */}
           <div className="flex-1 space-y-6">
-            {!isLoading && data && data.items.length === 0 ? (
+            {!isLoading && allAds.length === 0 ? (
               <EmptyState
                 icon={PackageOpen}
                 title="Ingen treff"
@@ -175,40 +183,13 @@ export default function SearchPageContent() {
                 }}
               />
             ) : (
-              <AdGrid ads={data?.items} isLoading={isLoading} />
-            )}
-
-            {/* Pagination */}
-            {data && data.pages > 1 && (
-              <div className="flex items-center justify-center gap-2 pt-4">
-                {currentPage > 1 && (
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={() =>
-                      updateUrl({ page: String(currentPage - 1) })
-                    }
-                  >
-                    Forrige
-                  </Button>
-                )}
-
-                <span className="text-sm text-gray-500 px-3">
-                  Side {currentPage} av {data.pages}
-                </span>
-
-                {currentPage < data.pages && (
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={() =>
-                      updateUrl({ page: String(currentPage + 1) })
-                    }
-                  >
-                    Neste
-                  </Button>
-                )}
-              </div>
+              <AdGrid
+                ads={allAds}
+                isLoading={isLoading}
+                onLoadMore={handleLoadMore}
+                hasMore={!!hasNextPage}
+                isFetchingMore={isFetchingNextPage}
+              />
             )}
           </div>
         </div>
