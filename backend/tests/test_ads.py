@@ -460,3 +460,48 @@ async def test_views_count_increments(async_client: AsyncClient) -> None:
     views2 = resp2.json()["views_count"]
 
     assert views2 == views1 + 1
+
+
+@pytest.mark.asyncio
+async def test_similar_ads_returns_same_category(async_client: AsyncClient) -> None:
+    """Scenario 20: Lignende annonser returnerer annonser fra samme kategori."""
+    cat_electronics = await _create_category_with_slug("elektronikk-sim", "Elektronikk")
+    cat_furniture = await _create_category_with_slug("mobler-sim", "Mobler")
+    headers = await _auth_header(async_client)
+
+    # Create ads in electronics category
+    ad1 = await _create_ad(async_client, headers, cat_electronics, title="iPhone 15")
+    await _create_ad(async_client, headers, cat_electronics, title="Samsung Galaxy")
+    await _create_ad(async_client, headers, cat_electronics, title="Google Pixel")
+
+    # Create ad in furniture category (should NOT appear)
+    await _create_ad(async_client, headers, cat_furniture, title="Sofa")
+
+    resp = await async_client.get(f"/api/v1/ads/{ad1['id']}/similar")
+    assert resp.status_code == 200
+    data = resp.json()
+
+    # Should return max 6 ads, all from electronics category
+    assert len(data) <= 6
+    assert len(data) == 2  # Samsung Galaxy + Google Pixel (not iPhone 15 itself, not Sofa)
+    for ad in data:
+        assert ad["category"]["slug"] == "elektronikk-sim"
+
+
+@pytest.mark.asyncio
+async def test_similar_ads_excludes_current(async_client: AsyncClient) -> None:
+    """Scenario 21: Lignende annonser ekskluderer gjeldende annonse."""
+    cat_id = await _create_category_with_slug("biler-sim", "Biler")
+    headers = await _auth_header(async_client)
+
+    target_ad = await _create_ad(async_client, headers, cat_id, title="BMW 320i")
+    await _create_ad(async_client, headers, cat_id, title="Audi A4")
+    await _create_ad(async_client, headers, cat_id, title="Mercedes C200")
+
+    resp = await async_client.get(f"/api/v1/ads/{target_ad['id']}/similar")
+    assert resp.status_code == 200
+    data = resp.json()
+
+    returned_ids = [ad["id"] for ad in data]
+    assert target_ad["id"] not in returned_ids
+    assert len(data) == 2  # Audi A4 + Mercedes C200
