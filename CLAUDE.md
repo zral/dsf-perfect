@@ -137,7 +137,31 @@ Fabrikken lærer av egne feil gjennom:
 - Antall iterasjoner før godkjent
 - Typer feil funnet i review
 - Testdekning over tid
-- Tid brukt per fase
+- **Tid brukt per fase** (KRITISK — logg start/slutt for hver fase)
+
+### Tidsmåling
+
+**VIKTIG**: Alle faser skal logge varighet. Dette gjøres ved å:
+1. Notere starttidspunkt ved begynnelsen av hver fase
+2. Notere sluttidspunkt ved fullføring
+3. Inkludere varighet i iterasjonsloggen og alle rapporter
+
+Format i iterasjonslogg:
+```markdown
+## Tidsbruk
+| Fase | Start | Slutt | Varighet |
+|------|-------|-------|----------|
+| Intake | HH:MM | HH:MM | Xm |
+| Design | HH:MM | HH:MM | Xm |
+| Develop | HH:MM | HH:MM | Xm |
+| Review | HH:MM | HH:MM | Xm |
+| Test | HH:MM | HH:MM | Xm |
+| Document | HH:MM | HH:MM | Xm |
+| Retro | HH:MM | HH:MM | Xm |
+| **Totalt** | | | **Xm** |
+```
+
+Alle review-, test- og retro-rapporter skal også inkludere sin egen varighet.
 
 ## Konvensjoner
 
