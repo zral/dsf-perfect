@@ -8,7 +8,8 @@ from app.dependencies import get_current_user
 from app.middleware.rate_limit import rate_limit
 from app.models.user import User
 from app.schemas.ad import AdCreate, AdImageResponse, AdListResponse, AdResponse, AdUpdate
-from app.services import ad_service, image_service
+from app.schemas.favorite import FavoriteResponse
+from app.services import ad_service, favorite_service, image_service
 
 router = APIRouter(prefix="/api/v1/ads", tags=["ads"])
 
@@ -95,6 +96,29 @@ async def delete_ad(
     current_user: User = Depends(get_current_user),
 ) -> None:
     await ad_service.delete_ad(db, ad_id, current_user.id)
+
+
+@router.post(
+    "/{ad_id}/favorite",
+    response_model=FavoriteResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+async def add_favorite(
+    ad_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> FavoriteResponse:
+    fav = await favorite_service.add_favorite(db, current_user.id, ad_id)
+    return FavoriteResponse.model_validate(fav)
+
+
+@router.delete("/{ad_id}/favorite", status_code=status.HTTP_204_NO_CONTENT)
+async def remove_favorite(
+    ad_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> None:
+    await favorite_service.remove_favorite(db, current_user.id, ad_id)
 
 
 @router.post(
