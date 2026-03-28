@@ -57,6 +57,7 @@ export function useSendMessage() {
 }
 
 export function useUnreadCount() {
+  const token = getAccessToken();
   return useQuery({
     queryKey: ["unreadCount"],
     queryFn: async () => {
@@ -65,6 +66,7 @@ export function useUnreadCount() {
       );
       return data.count;
     },
+    enabled: !!token,
     refetchInterval: 30_000,
   });
 }

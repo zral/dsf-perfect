@@ -63,9 +63,7 @@ api.interceptors.response.use(
         } else {
           processQueue(new Error("Refresh failed"), null);
           clearTokens();
-          if (typeof window !== "undefined") {
-            window.location.href = "/login";
-          }
+          // Don't redirect — let components handle auth state
           return Promise.reject(error);
         }
       } catch (refreshError) {
