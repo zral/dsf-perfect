@@ -16,7 +16,7 @@ interface AuthState {
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, name: string, password: string) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
   fetchUser: () => Promise<void>;
 }
 
@@ -60,9 +60,20 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
 
-  logout: () => {
-    clearTokens();
-    set({ user: null, isAuthenticated: false });
+  logout: async () => {
+    try {
+      const refreshToken = (await import("@/lib/auth")).getRefreshToken();
+      if (refreshToken) {
+        await api.post("/api/v1/auth/logout", {
+          refresh_token: refreshToken,
+        });
+      }
+    } catch {
+      // Best-effort server-side logout
+    } finally {
+      clearTokens();
+      set({ user: null, isAuthenticated: false });
+    }
   },
 
   fetchUser: async () => {
@@ -73,7 +84,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
     set({ isLoading: true });
     try {
-      const response = await api.get<User>("/api/v1/auth/me");
+      const response = await api.get<User>("/api/v1/users/me");
       set({ user: response.data, isAuthenticated: true, isLoading: false });
     } catch {
       clearTokens();
