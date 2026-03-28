@@ -60,11 +60,19 @@ Opprett `docs/architecture/decisions/NNNN-<tittel>.md` med malen fra `.dsf/templ
 
 Opprett `docs/design/YYYY-MM-DD-<feature>.md` med malen fra `.dsf/templates/design-doc.md`.
 
-9. **Oppdater iterasjonslogg**:
-   - Oppdater status i `.dsf/logs/` til `DESIGN ✅`
-   - Legg til lenker til design-doc og ADR-er
+9. **Avhengighetsgraf og parallellisering** (OBLIGATORISK):
+   Implementeringsplanen MÅ inneholde en avhengighetsgraf som viser:
+   - **Lag**: Gruppér oppgaver etter avhengighetsnivå (Lag 1 = ingen avhengigheter, Lag 2 = avhenger av Lag 1, osv.)
+   - **Avhengigheter**: Vis eksplisitt hvilke oppgaver som avhenger av hvilke (med `← [N]` notasjon)
+   - **Parallelliseringsmuligheter**: List konkret hvilke oppgaver som kan kjøres samtidig per lag
 
-10. **GATE: Design Review**:
+   Dette er uten unntak — alle design-docs skal ha denne seksjonen.
+
+10. **Oppdater iterasjonslogg**:
+    - Oppdater status i `.dsf/logs/` til `DESIGN ✅`
+    - Legg til lenker til design-doc og ADR-er
+
+11. **GATE: Design Review**:
    - Presenter designet for bruker
    - Fremhev viktige beslutninger og trade-offs
    - Be om eksplisitt godkjenning: "Godkjenner du dette designet?"

@@ -182,6 +182,36 @@ pattern = f"{query}%"  # Prefix match for speed
 11. Frontend: Oppdater Header med ekte SearchBar
 12. Frontend: Utvid FilterPanel med sted
 
+### Avhengighetsgraf og parallellisering
+
+```
+Lag 1 (ingen avhengigheter — kan kjøres parallelt):
+  ├── [1] Search schemas
+  ├── [4] Seed med underkategorier
+  └── [9] EmptyState komponent
+
+Lag 2 (avhenger av Lag 1):
+  ├── [2] Search service          ← [1]
+  └── [7] useSearch hook          ← [1] (API-kontrakt)
+
+Lag 3 (avhenger av Lag 2):
+  ├── [3] Search router           ← [1, 2]
+  ├── [5] Test-stubs              ← [1, 2, 3]
+  ├── [8] SearchBar m/autocomplete ← [7]
+  └── [12] FilterPanel med sted   ← [7]
+
+Lag 4 (avhenger av Lag 3):
+  ├── [6] Test-implementasjon     ← [3, 4, 5]
+  ├── [10] SearchResults side     ← [7, 9]
+  └── [11] Header med SearchBar   ← [8]
+```
+
+**Parallelliseringsmuligheter:**
+- Lag 1: [1], [4], [9] kan kjøres samtidig
+- Lag 2: Backend service [2] og frontend hook [7] kan kjøres parallelt
+- Lag 3: [8] og [12] kan kjøres parallelt; [3] og [5] sekvensielt
+- Lag 4: [6], [10], [11] kan kjøres samtidig
+
 ## Referanser
 - Spesifikasjon: [finn.md](../../finn.md)
 - Fase 2 design: [Fase 2 kjerneprodukt](2026-03-28-finn-fase2-kjerneprodukt.md)
