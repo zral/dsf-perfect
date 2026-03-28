@@ -21,11 +21,13 @@ Du er i REVIEW-fasen av DSF Development Loop.
 - [ ] Er feilhåndtering tilstrekkelig?
 - [ ] Fungerer koden korrekt med eksisterende kode?
 
-### Integrasjon (LEARNING 001)
+### Integrasjon (LEARNING 001, LEARNING 007)
 - [ ] Matcher frontend API-kall faktiske backend-endepunkter?
 - [ ] Er HTTP-metoder korrekte (GET/POST/PATCH/DELETE)?
 - [ ] Matcher request/response-formater mellom frontend og backend?
 - [ ] Er smoke test-tabellen i iterasjonsloggen komplett?
+- [ ] **Datatype-match** (LEARNING 007): For hvert POST/PATCH-kall — matcher frontend-verdier backend Pydantic schema-typer? (UUID vs slug, int vs float, enum-verdier)
+- [ ] **FormData-kall** (LEARNING 007): Er Content-Type ALDRI satt manuelt for multipart-kall?
 
 ### Krav-sporbarhet (LEARNING 002)
 - [ ] Er alle "Must have" fra design-doc implementert?
@@ -51,6 +53,7 @@ Du er i REVIEW-fasen av DSF Development Loop.
 - [ ] Er det unødvendig duplisering?
 - [ ] Er kompleksiteten minimert?
 - [ ] Er naming konsistent og beskrivende?
+- [ ] Brukes deprecated API-er? (f.eks. `datetime.utcnow()` -> `datetime.now(timezone.utc)`)
 
 ### Ytelse
 - [ ] Er det N+1-problemer?

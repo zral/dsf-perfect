@@ -59,7 +59,7 @@ Du er i DEVELOP-fasen av DSF Development Loop.
    - Commit-format: `<type>(<scope>): <beskrivelse>\n\nRefs: <design-doc>`
    - Eksempel: Hvis du implementerer auth OG brukerprofil, det er to separate commits
 
-6. **Smoke test: frontend↔backend integrasjon** (PROSESSFORBEDRING PE1):
+6. **Smoke test: frontend↔backend integrasjon** (PROSESSFORBEDRING PE1 + PE4):
    **FØR du markerer develop som ferdig**, verifiser at:
    - Alle frontend API-kall (`api.get()`, `api.post()`, etc.) matcher faktiske backend-endepunkter
    - Sjekk: for hvert kall i frontend `lib/`, `stores/`, og `hooks/`:
@@ -69,12 +69,20 @@ Du er i DEVELOP-fasen av DSF Development Loop.
      4. Response brukes korrekt i frontend
    - Hvis backend har OpenAPI: kjør `curl localhost:8000/openapi.json` og kryssjekk
 
+   **DATATYPE-VERIFISERING** (PROSESSFORBEDRING PE4, LEARNING 007):
+   For hvert POST/PATCH/PUT-kall, verifiser EKSPLISITT:
+   - **ID-typer**: Hvis backend Pydantic schema forventer `uuid.UUID`, sjekk at frontend sender faktisk UUID (ikke slug, ikke name, ikke annen string). Les frontend-koden og spor verdien tilbake til kilden.
+   - **Talltyper**: Hvis backend forventer `int` (f.eks. pris i øre), sjekk at frontend konverterer fra bruker-input (f.eks. kroner) korrekt.
+   - **Enum-verdier**: Sjekk at frontend sender gyldige enum-verdier som matcher backend-definisjonen.
+   - **FormData/multipart**: Hvis kallet bruker FormData, sjekk at `Content-Type` ALDRI settes manuelt. Axios/fetch setter korrekt `multipart/form-data; boundary=...` automatisk. Manuell header mangler boundary og vil feile.
+
    Logg resultat i iterasjonsloggen:
    ```markdown
    ## Smoke Test: Frontend↔Backend
-   | Frontend kall | Backend endepunkt | Match |
-   |--------------|-------------------|-------|
-   | api.post("/api/v1/auth/login") | POST /api/v1/auth/login | ✅ |
+   | Frontend kall | Backend endepunkt | HTTP | Datatyper OK? | Match |
+   |--------------|-------------------|------|---------------|-------|
+   | api.post("/api/v1/auth/login") | POST /api/v1/auth/login | POST | email:str, password:str ✅ | ✅ |
+   | api.post("/api/v1/ads", formData) | POST /api/v1/ads | POST | category_id:UUID ✅, no manual Content-Type ✅ | ✅ |
    ```
 
 7. **Dokumenter utsatte krav** (PROSESSFORBEDRING PE2):
