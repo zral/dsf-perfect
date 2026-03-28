@@ -94,6 +94,51 @@ Etter hver iterasjon kjører DSF en retrospektiv som:
 
 Erfaringsbasen leses automatisk ved start av nye iterasjoner, slik at de samme feilene ikke gjentas.
 
+## Testdata og seed
+
+Seed-scriptet oppretter kategorier, testbrukere og eksempelannonser:
+
+```bash
+# I Docker (anbefalt)
+docker compose exec api python -m app.seed
+
+# Lokalt
+cd backend && python3 -m app.seed
+```
+
+### Testbrukere (passord: `password123`)
+
+| Navn | E-post | Sted |
+|------|--------|------|
+| Ola Nordmann | ola@example.com | Oslo |
+| Kari Hansen | kari@example.com | Bergen |
+| Per Olsen | per@example.com | Trondheim |
+| Lisa Johansen | lisa@example.com | Stavanger |
+| Erik Larsen | erik@example.com | Tromsø |
+| + 5 til | ... | ... |
+
+### Seed-innhold
+- **12 hovedkategorier** + 19 underkategorier
+- **10 testbrukere** med norske navn og byer
+- **37 realistiske annonser** (elektronikk, bil, møbler, sport, klær, m.m.)
+
+### Oppstart med Docker
+
+```bash
+cp .env.example .env
+docker compose up -d --build
+docker compose exec api python -m app.seed
+# Åpne http://localhost:3000
+```
+
+| Tjeneste | URL |
+|----------|-----|
+| Frontend | http://localhost:3000 |
+| Backend API | http://localhost:8000 |
+| API docs (Swagger) | http://localhost:8000/docs |
+| MinIO console | http://localhost:9001 |
+| Nginx proxy | http://localhost:80 |
+
 ## Prosjektstruktur
 
 ```
