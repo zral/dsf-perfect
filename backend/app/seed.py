@@ -27,6 +27,41 @@ CATEGORIES = [
     {"name": "Dyr og utstyr", "slug": "dyr-og-utstyr", "icon": "PawPrint", "position": 11},
 ]
 
+# Subcategories: parent_slug -> list of {name, slug, icon}
+SUBCATEGORIES: dict[str, list[dict]] = {
+    "bil-og-motor": [
+        {"name": "Biler", "slug": "biler", "icon": "Car"},
+        {"name": "Motorsykler", "slug": "motorsykler", "icon": "Bike"},
+        {"name": "Deler og tilbehør", "slug": "deler-og-tilbehor", "icon": "Wrench"},
+    ],
+    "elektronikk": [
+        {"name": "Mobiltelefoner", "slug": "mobiltelefoner", "icon": "Smartphone"},
+        {"name": "Datamaskiner", "slug": "datamaskiner", "icon": "Laptop"},
+        {"name": "TV og lyd", "slug": "tv-og-lyd", "icon": "Tv"},
+    ],
+    "klaer-og-mote": [
+        {"name": "Herre", "slug": "herre", "icon": "Shirt"},
+        {"name": "Dame", "slug": "dame", "icon": "Shirt"},
+        {"name": "Barn", "slug": "barneklaer", "icon": "Baby"},
+    ],
+    "mobler-og-interior": [
+        {"name": "Sofaer", "slug": "sofaer", "icon": "Sofa"},
+        {"name": "Bord og stoler", "slug": "bord-og-stoler", "icon": "Table"},
+        {"name": "Oppbevaring", "slug": "oppbevaring", "icon": "Archive"},
+    ],
+    "sport-og-fritid": [
+        {"name": "Ski", "slug": "ski", "icon": "Mountain"},
+        {"name": "Sykkel", "slug": "sykkel", "icon": "Bike"},
+        {"name": "Trening", "slug": "trening", "icon": "Dumbbell"},
+        {"name": "Friluftsliv", "slug": "friluftsliv", "icon": "Tent"},
+    ],
+    "barn-og-familie": [
+        {"name": "Leker", "slug": "leker", "icon": "Gamepad2"},
+        {"name": "Barnevogn", "slug": "barnevogn", "icon": "Baby"},
+        {"name": "Barnemøbler", "slug": "barnemobler", "icon": "Sofa"},
+    ],
+}
+
 
 async def seed_categories() -> None:
     async with engine.begin() as conn:
@@ -39,12 +74,34 @@ async def seed_categories() -> None:
             print("Categories already seeded, skipping.")
             return
 
+        # Seed main categories
+        parent_map: dict[str, uuid.UUID] = {}
         for cat_data in CATEGORIES:
-            category = Category(id=uuid.uuid4(), **cat_data)
+            cat_id = uuid.uuid4()
+            category = Category(id=cat_id, **cat_data)
             session.add(category)
+            parent_map[cat_data["slug"]] = cat_id
+
+        # Seed subcategories
+        sub_count = 0
+        for parent_slug, children in SUBCATEGORIES.items():
+            parent_id = parent_map.get(parent_slug)
+            if not parent_id:
+                continue
+            for pos, child in enumerate(children):
+                sub = Category(
+                    id=uuid.uuid4(),
+                    parent_id=parent_id,
+                    name=child["name"],
+                    slug=child["slug"],
+                    icon=child["icon"],
+                    position=pos,
+                )
+                session.add(sub)
+                sub_count += 1
 
         await session.commit()
-        print(f"Seeded {len(CATEGORIES)} categories successfully.")
+        print(f"Seeded {len(CATEGORIES)} categories and {sub_count} subcategories.")
 
 
 if __name__ == "__main__":
