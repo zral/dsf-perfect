@@ -67,6 +67,16 @@ async def get_ad(
     return AdResponse.model_validate(ad)
 
 
+@router.get("/{ad_id}/similar", response_model=list[AdResponse])
+async def get_similar_ads(
+    ad_id: uuid.UUID,
+    limit: int = 6,
+    db: AsyncSession = Depends(get_db),
+) -> list[AdResponse]:
+    ads = await ad_service.get_similar_ads(db, ad_id, limit=limit)
+    return [AdResponse.model_validate(ad) for ad in ads]
+
+
 @router.patch("/{ad_id}", response_model=AdResponse)
 async def update_ad(
     ad_id: uuid.UUID,

@@ -173,3 +173,29 @@ async def delete_ad(
         )
     await db.delete(ad)
     await db.flush()
+
+
+async def get_similar_ads(
+    db: AsyncSession, ad_id: uuid.UUID, limit: int = 6
+) -> list[Ad]:
+    # Get the ad's category
+    result = await db.execute(select(Ad).where(Ad.id == ad_id))
+    ad = result.scalar_one_or_none()
+    if not ad:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Ad not found",
+        )
+
+    # Find other ACTIVE ads in same category, exclude current ad
+    query = (
+        _ad_query()
+        .where(Ad.category_id == ad.category_id)
+        .where(Ad.status == AdStatus.ACTIVE.value)
+        .where(Ad.id != ad_id)
+        .order_by(Ad.created_at.desc())
+        .limit(limit)
+    )
+
+    result = await db.execute(query)
+    return list(result.scalars().all())
