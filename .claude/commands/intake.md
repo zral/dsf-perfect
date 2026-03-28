@@ -54,6 +54,11 @@ Status: INTAKE ✅
 | Risiko | Sannsynlighet | Konsekvens | Tiltak |
 |--------|---------------|------------|--------|
 
+## Tidsbruk
+| Fase | Start | Slutt | Varighet |
+|------|-------|-------|----------|
+| Intake | HH:MM | HH:MM | Xm |
+
 ## Neste steg
 → Gå til DESIGN-fase med `/design`
 ```

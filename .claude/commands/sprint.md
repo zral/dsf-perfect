@@ -124,11 +124,29 @@ Når review og test ikke har avhengigheter (f.eks. ved re-review etter fiks), ka
 Agent(review) + Agent(test) → vent på begge → evaluer gates
 ```
 
+## Tidsmåling
+
+**VIKTIG**: Logg starttidspunkt ved begynnelsen av hver fase. Bruk `date +%H:%M` eller noter tidspunkt fra commit-tidsstempler. Inkluder i iterasjonsloggen og retrospektiv.
+
+## Selvforbedring — innebygd i loopen
+
+Disse forbedringene er implementert automatisk basert på learnings fra Fase 1:
+
+| Forbedring | Fase | Hva sjekkes |
+|-----------|------|-------------|
+| **Test-stubs (PE3)** | Develop | Tomme tester opprettes FØR implementasjon |
+| **MoSCoW (PE2)** | Design | Krav prioriteres, utsatte dokumenteres |
+| **Smoke test (PE1)** | Develop | Frontend API-kall verifiseres mot backend |
+| **Learnings-ref** | Review | Sjekklisten refererer relevante learnings |
+| **Effektivitetsanalyse** | Retro | Sammenligner med forrige iterasjon |
+| **Auto-oppdatering** | Retro | Skills oppdateres direkte, ikke bare foreslått |
+
 ## Viktig
 - **Stopp ved gates** — ikke gå videre uten godkjenning
 - **Subagents for uavhengighet** — review, test og retro skal ha ferskt blikk
 - **Logg alt** — sporbarhet er ikke valgfritt
 - **Sjekk learnings** — lær av historien
 - **Følg designet** — avvik krever ny godkjenning
+- **Mål tiden** — varighet per fase logges i iterasjonslogg
 
 Brukerens input (krav/oppgave): $ARGUMENTS
