@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from "@tanstack/react-query";
 import api from "@/lib/api";
 import type {
   Ad,
@@ -58,6 +58,49 @@ export function useCategoryAds(slug: string, filters: AdFilters = {}) {
       );
       return data;
     },
+    enabled: !!slug,
+  });
+}
+
+export function useSimilarAds(adId: string) {
+  return useQuery({
+    queryKey: ["similarAds", adId],
+    queryFn: async () => {
+      const { data } = await api.get<Ad[]>(`/api/v1/ads/${adId}/similar`);
+      return data;
+    },
+    enabled: !!adId,
+  });
+}
+
+export function useInfiniteAds(filters: Omit<AdFilters, "page"> = {}) {
+  return useInfiniteQuery({
+    queryKey: ["infiniteAds", filters],
+    queryFn: async ({ pageParam = 1 }) => {
+      const { data } = await api.get<AdListResponse>("/api/v1/ads", {
+        params: buildParams({ ...filters, page: pageParam as number }),
+      });
+      return data;
+    },
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) =>
+      lastPage.page < lastPage.pages ? lastPage.page + 1 : undefined,
+  });
+}
+
+export function useInfiniteCategoryAds(slug: string, filters: Omit<AdFilters, "page"> = {}) {
+  return useInfiniteQuery({
+    queryKey: ["infiniteCategoryAds", slug, filters],
+    queryFn: async ({ pageParam = 1 }) => {
+      const { data } = await api.get<AdListResponse>(
+        `/api/v1/categories/${slug}/ads`,
+        { params: buildParams({ ...filters, page: pageParam as number }) }
+      );
+      return data;
+    },
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) =>
+      lastPage.page < lastPage.pages ? lastPage.page + 1 : undefined,
     enabled: !!slug,
   });
 }

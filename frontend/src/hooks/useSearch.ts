@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import api from "@/lib/api";
 import type { AdListResponse } from "@/types/ad";
 
@@ -56,6 +56,21 @@ export function useSearch(params: SearchParams) {
       });
       return data;
     },
+  });
+}
+
+export function useInfiniteSearch(params: Omit<SearchParams, "page">) {
+  return useInfiniteQuery({
+    queryKey: ["infiniteSearch", params],
+    queryFn: async ({ pageParam = 1 }) => {
+      const { data } = await api.get<SearchResponse>("/api/v1/search", {
+        params: buildSearchParams({ ...params, page: pageParam as number }),
+      });
+      return data;
+    },
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) =>
+      lastPage.page < lastPage.pages ? lastPage.page + 1 : undefined,
   });
 }
 
