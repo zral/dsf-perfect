@@ -21,6 +21,21 @@ Du er i REVIEW-fasen av DSF Development Loop.
 - [ ] Er feilhåndtering tilstrekkelig?
 - [ ] Fungerer koden korrekt med eksisterende kode?
 
+### Integrasjon (LEARNING 001)
+- [ ] Matcher frontend API-kall faktiske backend-endepunkter?
+- [ ] Er HTTP-metoder korrekte (GET/POST/PATCH/DELETE)?
+- [ ] Matcher request/response-formater mellom frontend og backend?
+- [ ] Er smoke test-tabellen i iterasjonsloggen komplett?
+
+### Krav-sporbarhet (LEARNING 002)
+- [ ] Er alle "Must have" fra design-doc implementert?
+- [ ] Er utsatte "Should have" dokumentert som teknisk gjeld?
+- [ ] Finnes TODO-kommentarer for utsatte sikkerhetskrav?
+
+### Konfigurasjon (LEARNING 003)
+- [ ] Har alle hemmeligheter/secrets sikre defaults eller feilhåndtering?
+- [ ] Er det noen hardkodede verdier som burde være konfigurerbare?
+
 ### Sikkerhet (OWASP Top 10)
 - [ ] **Injection**: Er all input validert/sanitisert?
 - [ ] **Broken Auth**: Er autentisering korrekt implementert?
@@ -43,11 +58,13 @@ Du er i REVIEW-fasen av DSF Development Loop.
 - [ ] Er det potensielle minnelekkasjer?
 - [ ] Er database-queries effektive?
 
-### Testing
+### Testing (LEARNING 005)
 - [ ] Har all ny kode tester?
 - [ ] Tester edge cases og feilscenarier?
 - [ ] Er testene isolerte og uavhengige?
 - [ ] Passer testdekningen kravet (≥80%)?
+- [ ] Er alle test-stubs fra testplanen implementert (ingen gjenværende `pytest.skip`)?
+- [ ] Dekker testene alle sikkerhetskritiske scenarier?
 
 ### Dokumentasjon
 - [ ] Er public API dokumentert?
@@ -59,7 +76,11 @@ Du er i REVIEW-fasen av DSF Development Loop.
    - 🟡 **VIKTIG**: Bør fikses (kvalitet, vedlikeholdbarhet)
    - 🔵 **FORSLAG**: Kan vurderes (forbedringer, stil)
 
-4. **Generer review-rapport**:
+4. **Sjekk learnings-relevans**:
+   Les `.dsf/learnings/` og sjekk om noen er relevante for denne review.
+   Referér relevante learnings i rapporten som `(LEARNING NNN)`.
+
+5. **Generer review-rapport**:
 
 Opprett `.dsf/logs/YYYY-MM-DD-<kort-beskrivelse>-review.md`:
 
@@ -85,12 +106,12 @@ Reviewer: DSF Automated Review
 <GODKJENT / GODKJENT MED MERKNADER / AVVIST>
 ```
 
-5. **GATE: Quality Check**:
+6. **GATE: Quality Check**:
    - Hvis 🔴 KRITISK funn: **AVVIST** → Fiks og kjør `/review` igjen
    - Hvis bare 🟡 og 🔵: **GODKJENT MED MERKNADER** → Presenter for bruker
    - Hvis ingen funn: **GODKJENT** → Videre til test
 
-6. **Oppdater iterasjonslogg** med review-status
+7. **Oppdater iterasjonslogg** med review-status
 
 ## Neste steg
 Etter godkjent review → `/test`
