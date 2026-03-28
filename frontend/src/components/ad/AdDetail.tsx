@@ -1,10 +1,14 @@
 "use client";
 
-import { MapPin, Clock, Eye, User, ChevronRight } from "lucide-react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { MapPin, Clock, Eye, User, ChevronRight, MessageCircle } from "lucide-react";
 import ImageGallery from "./ImageGallery";
 import PriceTag from "./PriceTag";
 import { ConditionBadge, StatusBadge } from "./Badge";
 import Button from "@/components/common/Button";
+import { useAuth } from "@/hooks/useAuth";
+import { useSendMessage } from "@/hooks/useMessages";
 import type { Ad } from "@/types/ad";
 import { AdStatus } from "@/types/ad";
 
@@ -51,6 +55,42 @@ interface AdDetailProps {
 }
 
 export default function AdDetail({ ad }: AdDetailProps) {
+  const router = useRouter();
+  const { user, isAuthenticated } = useAuth();
+  const sendMessage = useSendMessage();
+  const [contactMessage, setContactMessage] = useState("");
+  const [showContactModal, setShowContactModal] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+
+  const isOwnAd = user?.id === ad.seller.id;
+  const canContact = isAuthenticated && !isOwnAd;
+
+  async function handleContactSeller() {
+    if (!canContact) {
+      router.push("/login");
+      return;
+    }
+    setShowContactModal(true);
+  }
+
+  async function handleSendInitialMessage() {
+    const content = contactMessage.trim() || `Hei! Jeg er interessert i "${ad.title}". Er den fortsatt tilgjengelig?`;
+    setIsSending(true);
+    try {
+      const result = await sendMessage.mutateAsync({
+        ad_id: ad.id,
+        content,
+      });
+      setShowContactModal(false);
+      setContactMessage("");
+      router.push(`/meldinger/${result.conversation_id}`);
+    } catch {
+      // Error handled by mutation
+    } finally {
+      setIsSending(false);
+    }
+  }
+
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Breadcrumb */}
@@ -175,12 +215,65 @@ export default function AdDetail({ ad }: AdDetailProps) {
                 <StarRating rating={ad.seller.rating} />
               </div>
             </div>
-            <Button variant="primary" size="lg" className="w-full">
-              Kontakt selger
-            </Button>
+            {!isOwnAd && (
+              <Button
+                variant="primary"
+                size="lg"
+                className="w-full"
+                icon={<MessageCircle className="h-4 w-4" />}
+                onClick={handleContactSeller}
+              >
+                Kontakt selger
+              </Button>
+            )}
           </div>
         </div>
       </div>
+
+      {/* Contact modal */}
+      {showContactModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-black/40"
+            onClick={() => setShowContactModal(false)}
+          />
+          <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-md p-6 space-y-4">
+            <h3 className="text-lg font-semibold text-gray-900">
+              Send melding til {ad.seller.name}
+            </h3>
+            <p className="text-sm text-gray-500">
+              Om: {ad.title}
+            </p>
+            <textarea
+              value={contactMessage}
+              onChange={(e) => setContactMessage(e.target.value)}
+              placeholder={`Hei! Jeg er interessert i "${ad.title}". Er den fortsatt tilgjengelig?`}
+              rows={3}
+              className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 resize-none"
+            />
+            <div className="flex gap-3">
+              <Button
+                variant="secondary"
+                size="md"
+                className="flex-1"
+                onClick={() => setShowContactModal(false)}
+              >
+                Avbryt
+              </Button>
+              <Button
+                variant="primary"
+                size="md"
+                className="flex-1"
+                icon={<MessageCircle className="h-4 w-4" />}
+                isLoading={isSending}
+                onClick={handleSendInitialMessage}
+              >
+                Send
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

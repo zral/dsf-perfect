@@ -2,14 +2,16 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { PlusCircle, User, LogOut, Menu, X } from "lucide-react";
+import { PlusCircle, User, LogOut, Menu, X, MessageCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Button from "@/components/common/Button";
 import SearchBar from "@/components/search/SearchBar";
 import { useAuth } from "@/hooks/useAuth";
+import { useUnreadCount } from "@/hooks/useMessages";
 
 export default function Header() {
   const { user, isAuthenticated, logout } = useAuth();
+  const { data: unreadCount } = useUnreadCount();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
@@ -44,6 +46,19 @@ export default function Header() {
                 Legg ut annonse
               </Button>
             </Link>
+
+            {isAuthenticated && (
+              <Link href="/meldinger" className="relative p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                <MessageCircle className="h-5 w-5 text-gray-600" />
+                {typeof unreadCount === "number" && unreadCount > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 h-4 min-w-[16px] px-1 rounded-full bg-red-500 flex items-center justify-center">
+                    <span className="text-[10px] font-bold text-white">
+                      {unreadCount > 99 ? "99+" : unreadCount}
+                    </span>
+                  </span>
+                )}
+              </Link>
+            )}
 
             {isAuthenticated && user ? (
               <div className="relative">
