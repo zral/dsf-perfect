@@ -35,9 +35,20 @@ Du er i DESIGN-fasen av DSF Development Loop.
 5. **Testbarhet**:
    - Hvordan skal dette testes?
    - Hvilke mocking/stubbing er nødvendig?
-   - Definér test-scenarier på forhånd
+   - Definér test-scenarier på forhånd (disse blir test-stubs i develop)
 
-6. **ADR** (for vesentlige arkitekturvalg):
+6. **MoSCoW-prioritering** (PROSESSFORBEDRING PE2):
+   Klassifiser ALLE krav fra designet:
+   - **Must have**: Skal implementeres i denne iterasjonen. Blokkerer review.
+   - **Should have**: Bør implementeres. Hvis utsatt → MÅ dokumenteres som teknisk gjeld.
+   - **Could have**: Kan implementeres hvis tid. Dokumenteres som fremtidig arbeid.
+   - **Won't have**: Eksplisitt utenfor scope.
+
+   Alle "Should have" som IKKE implementeres MÅ ha:
+   - TODO-kommentar i relevant kode: `# TODO(tech-debt): <krav> — utsatt fra <design-doc>, planlagt fase X`
+   - Oppføring i `.dsf/logs/tech-debt.md`
+
+7. **ADR** (for vesentlige arkitekturvalg):
 
 Opprett `docs/architecture/decisions/NNNN-<tittel>.md` med malen fra `.dsf/templates/adr.md`:
 - Kontekst: Hvorfor tar vi denne beslutningen?
@@ -45,15 +56,15 @@ Opprett `docs/architecture/decisions/NNNN-<tittel>.md` med malen fra `.dsf/templ
 - Beslutning og begrunnelse
 - Konsekvenser
 
-7. **Design-dokument**:
+8. **Design-dokument**:
 
 Opprett `docs/design/YYYY-MM-DD-<feature>.md` med malen fra `.dsf/templates/design-doc.md`.
 
-8. **Oppdater iterasjonslogg**:
+9. **Oppdater iterasjonslogg**:
    - Oppdater status i `.dsf/logs/` til `DESIGN ✅`
    - Legg til lenker til design-doc og ADR-er
 
-9. **GATE: Design Review**:
+10. **GATE: Design Review**:
    - Presenter designet for bruker
    - Fremhev viktige beslutninger og trade-offs
    - Be om eksplisitt godkjenning: "Godkjenner du dette designet?"
