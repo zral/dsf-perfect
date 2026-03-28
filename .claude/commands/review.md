@@ -38,6 +38,11 @@ Du er i REVIEW-fasen av DSF Development Loop.
 - [ ] Har alle hemmeligheter/secrets sikre defaults eller feilhåndtering?
 - [ ] Er det noen hardkodede verdier som burde være konfigurerbare?
 
+### Auth-guards i globale komponenter (LEARNING 013)
+- [ ] Har API-kall i layout/Header/BottomNav `enabled: !!token` guard?
+- [ ] Er det noen `window.location.href` redirects i API-interceptors? (ALDRI gjør dette)
+- [ ] Kan uautentiserte brukere laste forsiden uten 401-feil?
+
 ### Sikkerhet (OWASP Top 10)
 - [ ] **Injection**: Er all input validert/sanitisert?
 - [ ] **Broken Auth**: Er autentisering korrekt implementert?
