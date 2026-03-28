@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Search, PlusCircle, User, LogOut, Menu, X } from "lucide-react";
+import { PlusCircle, User, LogOut, Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Button from "@/components/common/Button";
+import SearchBar from "@/components/search/SearchBar";
 import { useAuth } from "@/hooks/useAuth";
 
 export default function Header() {
@@ -29,16 +30,7 @@ export default function Header() {
 
           {/* Search bar - hidden on mobile, visible on md+ */}
           <div className="hidden md:flex flex-1 max-w-xl">
-            <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Søk i alle annonser..."
-                className="w-full pl-10 pr-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl
-                  focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500
-                  placeholder:text-gray-400 transition-all"
-              />
-            </div>
+            <SearchBar />
           </div>
 
           {/* Actions */}
@@ -122,16 +114,7 @@ export default function Header() {
 
         {/* Mobile search bar */}
         <div className="md:hidden pb-3">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Søk i alle annonser..."
-              className="w-full pl-10 pr-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl
-                focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500
-                placeholder:text-gray-400 transition-all"
-            />
-          </div>
+          <SearchBar />
         </div>
       </div>
 

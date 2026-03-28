@@ -13,6 +13,7 @@ export interface FilterValues {
   price_max?: number;
   conditions: AdCondition[];
   sort: "newest" | "price_asc" | "price_desc";
+  location?: string;
 }
 
 interface FilterPanelProps {
@@ -38,6 +39,24 @@ function FilterContent({ filters, onChange }: FilterPanelProps) {
         <SortSelect
           value={filters.sort}
           onChange={(sort) => onChange({ ...filters, sort })}
+        />
+      </div>
+
+      {/* Location */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Sted
+        </label>
+        <Input
+          type="text"
+          placeholder="F.eks. Oslo, Bergen..."
+          value={filters.location ?? ""}
+          onChange={(e) =>
+            onChange({
+              ...filters,
+              location: e.target.value || undefined,
+            })
+          }
         />
       </div>
 
@@ -116,6 +135,7 @@ function FilterContent({ filters, onChange }: FilterPanelProps) {
             price_max: undefined,
             conditions: [],
             sort: "newest",
+            location: undefined,
           })
         }
         className="text-sm text-blue-600 hover:text-blue-700 font-medium cursor-pointer"

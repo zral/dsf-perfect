@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import {
-  Search,
   Car,
   Home,
   Shirt,
@@ -20,6 +19,7 @@ import {
 import { motion } from "framer-motion";
 import { useAds } from "@/hooks/useAds";
 import AdGrid from "@/components/ad/AdGrid";
+import SearchBar from "@/components/search/SearchBar";
 
 const categories = [
   { name: "Bil og motor", slug: "bil-og-motor", icon: Car, color: "bg-blue-50 text-blue-600" },
@@ -63,16 +63,11 @@ export default function HomePage() {
 
             {/* Hero search bar */}
             <div className="mt-8 max-w-2xl mx-auto">
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Hva leter du etter?"
-                  className="w-full pl-12 pr-4 py-4 text-base bg-white rounded-2xl shadow-xl shadow-blue-900/20
-                    focus:outline-none focus:ring-4 focus:ring-white/30
-                    placeholder:text-gray-400 text-gray-900 transition-all"
-                />
-              </div>
+              <SearchBar
+                className="[&_input]:py-4 [&_input]:text-base [&_input]:bg-white [&_input]:rounded-2xl [&_input]:shadow-xl [&_input]:shadow-blue-900/20
+                  [&_input]:focus:ring-4 [&_input]:focus:ring-white/30 [&_input]:border-0 [&_input]:pl-12
+                  [&_svg:first-child]:h-5 [&_svg:first-child]:w-5 [&_svg:first-child]:left-4"
+              />
             </div>
           </motion.div>
         </div>
