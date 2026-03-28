@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,6 +20,8 @@ import {
   Palette,
   Wrench,
   Gamepad2,
+  PawPrint,
+  Briefcase,
   type LucideIcon,
 } from "lucide-react";
 import Button from "@/components/common/Button";
@@ -29,28 +31,44 @@ import type { UploadedImage } from "./ImageUpload";
 import AdDetail from "./AdDetail";
 import { PriceType, AdCondition, AdStatus } from "@/types/ad";
 import type { Ad, AdCreateRequest } from "@/types/ad";
+import api from "@/lib/api";
 
-const categoryOptions: {
-  id: string;
+// Map Lucide icon names from backend to components
+const iconMap: Record<string, LucideIcon> = {
+  Car, Home, Shirt, Smartphone, Sofa, Dumbbell, Baby, Bike,
+  BookOpen, Palette, Wrench, Gamepad2, PawPrint, Briefcase,
+};
+
+const colorMap: Record<string, string> = {
+  Car: "bg-blue-50 text-blue-600",
+  Home: "bg-emerald-50 text-emerald-600",
+  Shirt: "bg-pink-50 text-pink-600",
+  Smartphone: "bg-purple-50 text-purple-600",
+  Sofa: "bg-amber-50 text-amber-600",
+  Dumbbell: "bg-red-50 text-red-600",
+  Baby: "bg-cyan-50 text-cyan-600",
+  Bike: "bg-teal-50 text-teal-600",
+  BookOpen: "bg-indigo-50 text-indigo-600",
+  Palette: "bg-orange-50 text-orange-600",
+  Wrench: "bg-slate-50 text-slate-600",
+  Gamepad2: "bg-violet-50 text-violet-600",
+  PawPrint: "bg-lime-50 text-lime-600",
+  Briefcase: "bg-gray-50 text-gray-600",
+};
+
+interface CategoryOption {
+  id: string;   // Real UUID from backend
   name: string;
   slug: string;
   icon: LucideIcon;
   color: string;
-}[] = [
-  {
-    id: "bil-og-motor",
-    name: "Bil og motor",
-    slug: "bil-og-motor",
-    icon: Car,
-    color: "bg-blue-50 text-blue-600",
-  },
-  {
-    id: "eiendom",
-    name: "Eiendom",
-    slug: "eiendom",
-    icon: Home,
-    color: "bg-emerald-50 text-emerald-600",
-  },
+}
+
+// Categories are fetched from API with real UUIDs
+// (LEARNING 001: frontend must use actual backend IDs, not slugs)
+
+// Fallback hardcoded list only used if API fetch fails
+const fallbackCategoryOptions: CategoryOption[] = [
   {
     id: "klaer-og-mote",
     name: "Klær og mote",
@@ -123,6 +141,16 @@ const categoryOptions: {
   },
 ];
 
+function mapApiCategories(apiCategories: Array<{ id: string; name: string; slug: string; icon: string | null }>): CategoryOption[] {
+  return apiCategories.map((cat) => ({
+    id: cat.id,  // Real UUID from backend
+    name: cat.name,
+    slug: cat.slug,
+    icon: (cat.icon && iconMap[cat.icon]) || Palette,
+    color: (cat.icon && colorMap[cat.icon]) || "bg-gray-50 text-gray-600",
+  }));
+}
+
 const adSchema = z.object({
   title: z
     .string()
@@ -151,6 +179,19 @@ export default function AdForm({ onSubmit, isSubmitting }: AdFormProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
+  const [categoryOptions, setCategoryOptions] = useState<CategoryOption[]>(fallbackCategoryOptions);
+
+  // Fetch real categories with UUIDs from API (LEARNING 001)
+  useEffect(() => {
+    api.get<Array<{ id: string; name: string; slug: string; icon: string | null }>>("/api/v1/categories/")
+      .then((res) => {
+        const mapped = mapApiCategories(res.data);
+        if (mapped.length > 0) setCategoryOptions(mapped);
+      })
+      .catch(() => {
+        // Fallback to hardcoded list if API unavailable
+      });
+  }, []);
 
   const {
     register,

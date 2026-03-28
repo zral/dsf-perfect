@@ -113,10 +113,10 @@ export function useUploadImage() {
     mutationFn: async ({ adId, file }: { adId: string; file: File }) => {
       const formData = new FormData();
       formData.append("file", file);
+      // Don't set Content-Type manually — Axios sets it automatically with correct boundary for FormData
       const { data } = await api.post<AdImage>(
         `/api/v1/ads/${adId}/images`,
-        formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
+        formData
       );
       return data;
     },
