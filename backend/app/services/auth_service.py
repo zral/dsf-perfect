@@ -18,6 +18,7 @@ from app.utils.security import (
 
 
 async def create_user(db: AsyncSession, email: str, name: str, password: str) -> User:
+    email = email.strip().lower()
     result = await db.execute(select(User).where(User.email == email))
     existing = result.scalar_one_or_none()
     if existing:
@@ -38,6 +39,7 @@ async def create_user(db: AsyncSession, email: str, name: str, password: str) ->
 
 
 async def authenticate_user(db: AsyncSession, email: str, password: str) -> User | None:
+    email = email.strip().lower()
     result = await db.execute(select(User).where(User.email == email))
     user = result.scalar_one_or_none()
     if not user:
